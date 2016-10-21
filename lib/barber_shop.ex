@@ -1,0 +1,2 @@
+defmodule BarberShop do
+end

@@ -34,8 +34,8 @@ alias BarberShop.Server, as: Server
     list
   end
 
-  defp add_customer([{n, :full, m}| t], customer, new_chairs) do
-    list = new_chairs ++ [{n, :full, m}]
+  defp add_customer([seat = {_n, :full, _m}| t], customer, new_chairs) do
+    list = new_chairs ++ [seat]
     add_customer(t, customer, list)
   end
 
@@ -45,4 +45,21 @@ alias BarberShop.Server, as: Server
   end
 
   #write get next customer function
+  def next_customer(chairs) do
+    next_customer(chairs, [])
+  end
+
+  defp next_customer([seat = {_n, :empty, nil}|t], new_chairs) do
+    next_customer(t, new_chairs ++ [seat])
+  end
+
+  defp next_customer([{n, :full, m}|t], new_chairs) do
+    list = new_chairs ++ [{n, :empty, nil}] ++ t
+    IO.inspect "customer #{m} has left seat #{n} to get a hair cut"
+    {list, {:customer, m}}
+  end
+
+  defp next_customer([], new_chairs) do
+    {new_chairs, {:customer, :none}}
+  end
 end

@@ -7,6 +7,12 @@ defmodule BarberShop.Barber do
   2. After a barber has finished cutting a customer's hair
   they go to 'sleep'
 """
+
+#have to think more about how to handle barbers
+##we know what who the next customer is,
+##we don't know which barber is free,
+##I think that should be tracked by
+##ShopServer, this will act like chairs does
   def init(time, shop_pid, id) do
     spawn(__MODULE__, :cut_hair, [time, shop_pid, id])
   end

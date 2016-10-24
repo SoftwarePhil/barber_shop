@@ -16,12 +16,12 @@ defmodule BarberShop.Server do
      many barbers work in that shop
   3. A hair cut takes a set amount of time
   4. Once a customer's hair is done being cut they leave
-     the shop, and barber who cutctheir hair goes to 'sleep'
+     the shop, and barber who cut their hair goes to 'sleep'
   5. New customers arrive on based on a timer, if there
      is no open chair in the waiting room, the customer
      leaves
-  6. If there is a free barber that is 'sleeping', they
-     many take a customer and start cutting their hair
+  6. If there is a free barber, they many take a customer
+     and start cutting their hair
   """
   def handle_call({:init, shop_state}, _from, []) do
     {:reply, {:set, shop_state}, shop_state}

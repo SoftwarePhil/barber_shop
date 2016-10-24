@@ -12,26 +12,63 @@ defmodule BarberShop.Barber do
 ##we know what who the next customer is,
 ##we don't know which barber is free,
 ##I think that should be tracked by
-##ShopServer, this will act like chairs does
-  def init(time, shop_pid, id) do
-    spawn(__MODULE__, :cut_hair, [time, shop_pid, id])
+##ShopServer, this  module will act like shop does
+
+alias BarberShop.Server, as: Server
+
+  def init(time, id) do
+    spawn(__MODULE__, :cuthair, [time, id])
   end
 
-  def cut_hair(time, shop_pid, id) do
+  def cuthair(time, id) do
     receive do
       {:customer, customer_id} ->
         IO.puts "baber #{id} cutting #{customer_id}'s hair"
-        send shop_pid, {:cutting, id}
+        #send shop_pid, {:cutting, id}
 
         :timer.sleep(time)
 
         IO.puts "barber #{id} is done cutting #{customer_id}'s hair"
-        send shop_pid, {:cutting_done, id}
+        #send shop_pid, {:cutting_done, id} # need a GenServer cast to set state to free again
 
-      {:sleep} ->
-        IO.puts "barber #{id} sleeping"
-        send shop_pid, {:sleeping, id}
+        #this is conufsing because, they are done, server being send this busy barber,
+        #the barber gets marked as being free in the servers list
+        #I think the barber's process should be more encauplusated, ie just receive messages of customers,
+        #have their own state ..
+        Server.haircut_done({self, :busy})
     end
-    cut_hair(time, shop_pid, id)
+    cuthair(time, id)
   end
+
+#find a free barber, make that barber give a hair cut
+  def next_haircut(barber_list, customer_id) do
+    next_haircut(barber_list, customer_id, [])
+  end
+
+  defp next_haircut([barber = {pid, :free}|t], customer_id, new_list) do
+    send pid, {:customer, customer_id}
+    new_list ++ [barber] ++ t
+  end
+
+  defp next_haircut([barber = {_pid, :busy}|t], customer_id, new_list) do
+    next_haircut(t, customer_id, [new_list] ++ barber)
+  end
+
+  defp next_haircut([], _customer_id, new_list) do
+    new_list
+  end
+
+#used to mark a barber done after they complete a haircut
+  def barber_done(barber_list, barber) do
+    barber_done(barber_list, barber, [])
+  end
+
+  defp barber_done([{pid, :busy}|t], barber = {pid, :busy}, new_list) do
+    new_list ++ [{pid, :free}] ++ t
+  end
+
+  defp barber_done([h | t], barber, new_list) do
+    barber_done(t, barber, [new_list] ++ h)
+  end
+
 end

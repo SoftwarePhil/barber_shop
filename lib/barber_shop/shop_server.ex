@@ -31,13 +31,19 @@ defmodule BarberShop.Server do
     {:noreply, {barber_list, Shop.add_customer(chairs, customer)}}
   end
 
+  def handle_cast({:cuthair_done, barber} {barber_list, chairs}) do
+    {:noreply, {Barber.barber_done(barber_list, barber), chairs}}
+  end
+
 #client
 @name __MODULE__
+
+#with a run shop process I think this will be done, should write other tests 
   def start_link(barbers, chairs) do
     {:ok, pid} = GenServer.start_link(__MODULE__, [], name: @name)
 
-    barber_list = 1..barbers |>Enum.to_list |>Enum.map(fn(id) -> Barber.init(@cut_time, pid, id) end)
-    chair_list  = 1..chairs |>Enum.to_list |>Enum.map(fn(id) -> {id, :empty, nil} end)
+    barber_list = 1..barbers |>Enum.map(fn(id) -> {Barber.init(@cut_time, pid, id), :free} end)
+    chair_list  = 1..chairs  |>Enum.map(fn(id) -> {id, :empty, nil} end)
     shop_state  = {barber_list, chair_list}
     GenServer.call(@name, {:init, shop_state})
 
@@ -50,6 +56,10 @@ defmodule BarberShop.Server do
 #when a new customer arives, this gets called
   def new_customer(customer) do
     GenServer.cast(@name, {:new_customer, customer})
+  end
+
+  def haircut_done(barber) do
+    GenServer.cast(@name, {:haircut_done, barber})
   end
 
 end

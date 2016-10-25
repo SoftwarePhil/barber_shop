@@ -8,6 +8,7 @@ alias BarberShop.Server, as: Server
 
   def init(max, time, num \\ 1) do
     spawn(__MODULE__, :arive, [max, time, num])
+    Server.next_haircut
   end
 
   def arive(max, time, num) when max > 0 do
@@ -60,6 +61,6 @@ alias BarberShop.Server, as: Server
   end
 
   defp next_customer([], new_chairs) do
-    {new_chairs, {:customer, :none}}
+    {new_chairs, :none}
   end
 end

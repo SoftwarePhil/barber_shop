@@ -3,10 +3,12 @@
 This program is being written to learn about concurrency in elixir
   
   to run: 
-  	 iex> BarberShop.Server.start_link 3,5
+  	 iex> BarberShop.Agent.start_link 2,4
 
   (3 barbers, with 5 seats)
-  other params in BarberShop.Server module
+  other params in BarberShop.Agent module
+
+  *note BarberShop.Server module can also be used if the Server alias is changed in shop.ex
 
   ##Shop Rules
   1. Barber shops have a set number of chairs in their

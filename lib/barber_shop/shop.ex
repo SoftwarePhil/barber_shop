@@ -3,6 +3,8 @@ defmodule BarberShop.Shop do
   This module acts like a shop.  It can take in new cutomers,
   and remove customers from the waiting room. it also starts
   a process which adds new customers to the waiting room
+
+  if using GenServer, uncomment line 9, comment line 10
 """
 #alias BarberShop.Server, as: Server
 alias BarberShop.Agent, as: Server
@@ -12,7 +14,10 @@ alias BarberShop.Agent, as: Server
     Server.next_haircut
   end
 
-#maybe have customer look for barber first and than sit down ..
+@doc """
+  A process that adds new customers to the waiting room after some
+  amount of time has passed
+"""
   def arive(max, time, num) when max > 0 do
     IO.puts "new customer #{num} has arived"
     Server.new_customer(num)
@@ -24,9 +29,6 @@ alias BarberShop.Agent, as: Server
     IO.puts "No more cutomers will arive, all #{num - 1} customers have arived"
   end
 
-#list = [{1, :empty, nil}, {2, :empty, nil}, {3, :empty, nil}, {4, :empty, nil}]
-#new_customer(list, 1)
-#[{1, :full, 1}, {2, :empty, nil}, {3, :empty, nil}, {4, :empty, nil}]
   def add_customer(chairs, customer) do
     add_customer(chairs, customer, [])
   end
@@ -47,8 +49,11 @@ alias BarberShop.Agent, as: Server
     new_chairs
   end
 
-  #maybe this function should not be called until a barber is ready?
-  #causing a race condition to happen with agent
+@doc """
+This function takes the next avaible customer and removes them from the list
+of customers in the waiting room, returning the customer who left thier chair
+and the new list of chairs, returns list and :none waiting room is empty
+"""
   def next_customer(chairs) do
     next_customer(chairs, [])
   end

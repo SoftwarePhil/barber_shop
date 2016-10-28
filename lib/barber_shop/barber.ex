@@ -82,5 +82,4 @@ alias BarberShop.Server, as: Server#
   defp barber_done([h | t], barber, new_list) do
     barber_done(t, barber, new_list ++ [h])
   end
-
 end

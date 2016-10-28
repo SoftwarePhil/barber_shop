@@ -85,5 +85,4 @@ so that they can cut another clients hair
   defp barber_done([h | t], barber, new_list) do
     barber_done(t, barber, new_list ++ [h])
   end
-
 end

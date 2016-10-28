@@ -20,15 +20,17 @@ defmodule BarberShop.Agent do
     Shop.init(@total_customers, @arive_time)
   end
 
-#this gets messed because two barbers both call at the same time,
-#and only one gets the customer .. My bad design of GenServer
-#made it not mater because when it was a cast and their were 2
-#calls at the same time the first one would change the state, the
-#second one would only get the updated state
-#
-#here the function is called twice, both calls have the same
-#state.. with this we need a process to manage these messages
-#and so only one can get called at a time ..
+#this allows calls to next_hair cut function to be synced up
+#before the same state was being to two barbers, and things were
+#getting messed up
+  def haircut_sync do
+    receive do
+      :next_haircut ->
+        :ok = BarberShop.Agent.next_haircut
+    end
+    haircut_sync
+  end
+
   def next_haircut() do
     state = {barber_list, chairs} = Agent.get(@name, fn state-> state end)
     IO.inspect state
@@ -49,15 +51,8 @@ defmodule BarberShop.Agent do
       end
   end
 
-  def haircut_sync do
-    receive do
-      :next_haircut ->
-        :ok = BarberShop.Agent.next_haircut
-    end
-    haircut_sync
-  end
-#when a new customer arives, this gets called
-#thoughts, this is harder to use when no using a struct or something
+  #when a new customer arives, this gets called
+  #thoughts, this is harder to use when no using a struct or something
   def new_customer(customer) do
     Agent.update(@name, fn({barber_list, chairs}) ->
                             {barber_list, Shop.add_customer(chairs, customer)}
@@ -69,6 +64,4 @@ defmodule BarberShop.Agent do
                             {Barber.barber_done(barber_list, barber), chairs}
                         end)
   end
-
-
 end

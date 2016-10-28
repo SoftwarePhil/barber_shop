@@ -93,5 +93,4 @@ defmodule BarberShop.Server do
   def barber_done(barber) do
     GenServer.cast(@name, {:barber_done, barber})
   end
-
 end

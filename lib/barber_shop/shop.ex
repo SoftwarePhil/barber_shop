@@ -4,16 +4,18 @@ defmodule BarberShop.Shop do
   and remove customers from the waiting room. it also starts
   a process which adds new customers to the waiting room
 """
-alias BarberShop.Server, as: Server
+#alias BarberShop.Server, as: Server
+alias BarberShop.Agent, as: Server
 
   def init(max, time, num \\ 1) do
     spawn(__MODULE__, :arive, [max, time, num])
     Server.next_haircut
   end
 
+#maybe have customer look for barber first and than sit down ..
   def arive(max, time, num) when max > 0 do
-    Server.new_customer(num)
     IO.puts "new customer #{num} has arived"
+    Server.new_customer(num)
     :timer.sleep(time)
     arive(max - 1, time, num + 1)
   end
@@ -31,7 +33,7 @@ alias BarberShop.Server, as: Server
 
   defp add_customer([{n, :empty, nil}|t], customer, new_chairs) do
     list = new_chairs ++ [{n, :full, customer}] ++ t
-    IO.inspect "customer #{customer} has sat in seat #{n}"
+    IO.puts "customer #{customer} has sat in seat #{n}"
     list
   end
 
@@ -41,11 +43,12 @@ alias BarberShop.Server, as: Server
   end
 
   defp add_customer([], customer, new_chairs) do
-    IO.inspect "customer #{customer} has left, no seats in waiting room"
+    IO.puts "customer #{customer} has left, no seats in waiting room"
     new_chairs
   end
 
-  #write get next customer function
+  #maybe this function should not be called until a barber is ready?
+  #causing a race condition to happen with agent
   def next_customer(chairs) do
     next_customer(chairs, [])
   end
@@ -56,7 +59,7 @@ alias BarberShop.Server, as: Server
 
   defp next_customer([{n, :full, m}|t], new_chairs) do
     list = new_chairs ++ [{n, :empty, nil}] ++ t
-    IO.inspect "customer #{m} has left seat #{n} to get a hair cut"
+    IO.puts "customer #{m} has left seat #{n} to get a hair cut"
     {list, {:customer, m}}
   end
 

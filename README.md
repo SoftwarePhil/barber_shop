@@ -1,12 +1,14 @@
 # BarberShop
 
 This program is being written to learn about concurrency in elixir
-  to run: iex> BarberShop.Server.start_link 3,5
+  
+  to run: 
+  	 iex> BarberShop.Server.start_link 3,5
 
   (3 barbers, with 5 seats)
   other params in BarberShop.Server module
 
-  Shop Rules
+  ##Shop Rules
   1. Barber shops have a set number of chairs in their
      waiting room
   2. Each shop has a set number of chairs for cutting

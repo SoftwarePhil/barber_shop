@@ -6,8 +6,8 @@ defmodule BarberShop.Shop do
 
   if using GenServer, uncomment line 9, comment line 10
 """
-#alias BarberShop.Server, as: Server
-alias BarberShop.Agent, as: Server
+alias BarberShop.Server, as: Server
+#alias BarberShop.Agent, as: Server
 
   def init(max, time, num \\ 1) do
     spawn(__MODULE__, :arive, [max, time, num])
@@ -19,14 +19,14 @@ alias BarberShop.Agent, as: Server
   amount of time has passed
 """
   def arive(max, time, num) when max > 0 do
-    IO.puts "new customer #{num} has arived"
+    IO.puts "new customer #{num} has arrived"
     Server.new_customer(num)
     :timer.sleep(time)
     arive(max - 1, time, num + 1)
   end
 
   def arive(0, _time, num) do
-    IO.puts "No more cutomers will arive, all #{num - 1} customers have arived"
+    IO.puts "No more customers will arrive, all #{num - 1} customers have arrived"
   end
 
   def add_customer(chairs, customer) do
@@ -64,7 +64,7 @@ and the new list of chairs, returns list and :none waiting room is empty
 
   defp next_customer([{n, :full, m}|t], new_chairs) do
     list = new_chairs ++ [{n, :empty, nil}] ++ t
-    IO.puts "customer #{m} has left seat #{n} to get a hair cut"
+    IO.puts "customer #{m} has left seat #{n} to get a haircut"
     {list, {:customer, m}}
   end
 

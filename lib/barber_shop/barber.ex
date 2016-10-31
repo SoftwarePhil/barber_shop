@@ -37,7 +37,7 @@ alias BarberShop.Server, as: Server#
         Server.barber_done({self, :busy})
         Server.next_haircut
 
-    after 1000 ->
+    after 100 ->
       Server.next_haircut
     end
 

@@ -2,9 +2,9 @@ defmodule BarberShop.Server do
   use GenServer
   alias BarberShop.Barber, as: Barber
   alias BarberShop.Shop, as: Shop
-  @cut_time 4500
-  @arive_time 1000
-  @total_customers 5
+  @cut_time 3000
+  @arive_time 900
+  @total_customers 20
   @moduledoc """
   This program is being written to learn about concurrency in elixir
   to run: iex> BarberShop.Server.start_link 3,5
@@ -49,7 +49,7 @@ defmodule BarberShop.Server do
 ## Thus the above problem should not happen as with each call of
 ## this function, atleast one barber is free
   def handle_cast(:next_haircut, state = {barber_list, chairs}) do
-    IO.inspect state
+    #IO.inspect state
     case Shop.next_customer(chairs) do
       {_new_chairs, :none} -> #no customers in waiting room
         {:noreply, {barber_list, chairs}}
@@ -75,7 +75,7 @@ defmodule BarberShop.Server do
     shop_state  = {barber_list, chair_list}
     {:ok, pid} = GenServer.start_link(__MODULE__, shop_state, name: @name)
 
-    IO.inspect shop_state
+    #IO.inspect shop_state
     Shop.init(@total_customers, @arive_time)
 
     pid
